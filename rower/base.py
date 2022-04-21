@@ -1,9 +1,11 @@
 from . import DATAPATH, USERPATH, RowerDatapackage
-from bw2data.backends.peewee import ActivityDataset as AD
-from bw2data import databases
+try:
+    from bw2data.backends import ActivityDataset as AD
+except ImportError:
+    from bw2data.backends.peewee import ActivityDataset as AD
+from bw2data import databases, Database
 from collections import defaultdict
 from itertools import count
-import bw2data
 import os
 import pyprind
 
@@ -28,6 +30,7 @@ class Rower(object):
     EI_3_5_APOS = os.path.join(DATAPATH, "ecoinvent 3.5 apos")
     EI_3_5_CUTOFF = os.path.join(DATAPATH, "ecoinvent 3.5 cutoff")
     EI_3_5_CONSEQUENTIAL = os.path.join(DATAPATH, "ecoinvent 3.5 consequential")
+    EI_3_8_CUTOFF = os.path.join(DATAPATH, "ecoinvent 3.8 cutoff")
 
     def __init__(self, database):
         """Initiate ``Rower`` object to consistently label 'Rest-of-World' locations in LCI databases.
@@ -52,8 +55,8 @@ class Rower(object):
         ``self.existing`` should be loaded (using ``self.load_existing``) from a previous saved result, while ``self.user_rows`` are new RoWs not found in ``self.existing``. When saving to a data package, only ``self.user_rows`` and ``self.labelled`` are saved.
 
         """
-        assert database in bw2data.databases, "Database {} not registered".format(database)
-        self.db = bw2data.Database(database)
+        assert database in databases, "Database {} not registered".format(database)
+        self.db = Database(database)
         self.existing = {}
         self.user_rows = {}
         self.labelled = {}
@@ -164,14 +167,14 @@ class Rower(object):
     def _load_groups_other_backend(self):
         """Return dictionary of ``{(name, product): [(location, code)]`` from non-SQLite3 database"""
         data = defaultdict(list)
-        for obj in bw2data.Database(database):
+        for obj in Database(database):
             data[(obj['name'], obj['product'])].append((obj['location'], obj['code']))
         return data
 
     def _load_groups_sqlite(self):
         """Return dictionary of ``{(name, product): [(location, code)]`` from SQLite3 database"""
         data = defaultdict(list)
-        # AD is the ActivityDataset db table (Model in Peewee) imported from bw2data.backends.peewee
+        # AD is the ActivityDataset db table (Model in Peewee) imported from bw2data.backends
         qs = list(AD.select(AD.name, AD.product, AD.location, AD.code).where(
             AD.database == self.db.name).dicts())
         for obj in qs:
