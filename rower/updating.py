@@ -40,8 +40,8 @@ def update_ecoinvent_definitions(new_ei):
         labelled, user_rows = r.define_RoWs()
         assert not user_rows
         rows_used = {i: j for i, j in existing.items() if i in labelled}
-        dp = RowerDatapackage(os.path.join(DATAPATH, "ecoinvent " + name))
-        dp.write_data("ecoinvent " + name, rows_used, labelled)
+        dp = RowerDatapackage(os.path.join(DATAPATH, name))
+        dp.write_data(name, rows_used, labelled)
 
     dp = RowerDatapackage(os.path.join(DATAPATH, "ecoinvent generic"))
     dp.write_data("ecoinvent generic", existing)
