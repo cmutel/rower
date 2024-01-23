@@ -2,7 +2,7 @@
   "profile": "data-package",
   "name": "ecoinvent 3.8 cutoff",
   "description": "Rest-of-World definitions and/or activity mappings for all or a given database",
-  "version": "1",
+  "version": "2",
   "licenses": [
     {
       "name": "ODC-PDDL-1.0",
@@ -10,7 +10,7 @@
       "title": "Open Data Commons Public Domain Dedication and Licence 1.0"
     }
   ],
-  "created": "2022-04-21T08:35:08.859258",
+  "created": "2024-01-23T09:00:50.664450",
   "resources": [
     {
       "name": "Rest-of-World definitions",
